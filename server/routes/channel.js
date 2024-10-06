@@ -49,3 +49,5 @@ router.post("/create", protect, async (req, res) => {
         res.status(500).json({ error: "Error creating channel" });
     }
 });
+
+module.exports = router;
