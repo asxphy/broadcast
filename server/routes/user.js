@@ -8,7 +8,7 @@ const router = express.Router();
 // Register user
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
-
+    console.log(req.body);
     // Validate fields
     if (!name || !email || !password) {
         return res.status(400).json({ error: "Please fill in all fields" });
@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
         const user = new User({ name, email, password });
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id }, "password", {
             expiresIn: "1h",
         });
 
@@ -36,6 +36,7 @@ router.post("/register", async (req, res) => {
             token,
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: "Error registering user" });
     }
 });
@@ -43,7 +44,7 @@ router.post("/register", async (req, res) => {
 // routes/auth.js (Login Endpoint)
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(req.body);
     if (!email || !password) {
         return res
             .status(400)
@@ -61,7 +62,7 @@ router.post("/login", async (req, res) => {
             return res.status(401).json({ error: "Invalid email or password" });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id }, "password", {
             expiresIn: "1h",
         });
 

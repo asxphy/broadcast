@@ -3,6 +3,7 @@ const express = require("express");
 const protect = require("../middleware/authMiddleware");
 const Channel = require("../models/Channel");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Create channel (user can create only 1 channel)
@@ -47,6 +48,25 @@ router.post("/create", protect, async (req, res) => {
         res.status(201).json(newChannel);
     } catch (error) {
         res.status(500).json({ error: "Error creating channel" });
+    }
+});
+
+router.get("/followed", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming the user ID is set in req.user after authentication
+
+        // Find the user by ID and populate the followed channels
+        const user = await User.findById(userId).populate("following");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Send the list of followed channels
+        res.status(200).json({ followedChannels: user.followedChannels });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
