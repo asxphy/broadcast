@@ -1,101 +1,96 @@
 // src/components/RegisterPage.js
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Card, TextField, Button, Typography, Box } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../global.css"; // Import global CSS
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (password !== confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
-
         try {
-            const response = await axios.post(
+            const res = await axios.post(
                 "http://localhost:5000/api/auth/register",
-                {
-                    name: username,
-                    email,
-                    password,
-                }
+                formData
             );
-
-            if (response.status === 201) {
-                setSuccess("Registration successful! Redirecting to login...");
-                setTimeout(() => {
-                    navigate("/login");
-                }, 2000);
-            } else {
-                setError("Registration failed. Please try again.");
+            if (res.status === 200) {
+                // Navigate to login after successful registration
+                navigate("/login");
             }
         } catch (err) {
-            setError("Registration error: " + err.message);
+            console.error("Registration failed", err);
         }
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <h1>Register</h1>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="100vh"
+        >
+            <Card sx={{ padding: 4, maxWidth: 400, boxShadow: 3 }}>
+                <Typography variant="h5" textAlign="center" mb={2}>
+                    Create an Account
+                </Typography>
                 <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>Username:</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your username"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Email:</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Password:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Confirm Password:</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Confirm your password"
-                            required
-                        />
-                    </div>
-                    {error && <p className="error-message">{error}</p>}
-                    {success && <p className="success-message">{success}</p>}
-                    <button type="submit">Register</button>
+                    <TextField
+                        fullWidth
+                        label="Name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Register
+                    </Button>
                 </form>
-            </div>
-        </div>
+                <Typography variant="body2" mt={2} textAlign="center">
+                    Already have an account? <Link to="/login">Login</Link>
+                </Typography>
+            </Card>
+        </Box>
     );
 };
 

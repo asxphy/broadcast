@@ -1,70 +1,87 @@
 // src/components/LoginPage.js
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Card, TextField, Button, Typography, Box } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../global.css"; // Import global CSS
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const response = await axios.post(
+            const res = await axios.post(
                 "http://localhost:5000/api/auth/login",
-                {
-                    email,
-                    password,
-                }
+                formData
             );
-
-            if (response.status === 200) {
-                // Save token or user data to local storage if needed
-                localStorage.setItem("token", response.data.token); // Assuming token-based authentication
-                navigate("/home"); // Redirect to homepage after login
-            } else {
-                setError("Login failed. Please check your credentials.");
+            if (res.status === 200) {
+                // Handle successful login (redirect, save token, etc.)
+                navigate("/");
             }
         } catch (err) {
-            setError("Login error: " + err.message);
+            console.error("Login failed", err);
         }
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <h1>Login</h1>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="100vh"
+        >
+            <Card sx={{ padding: 4, maxWidth: 400, boxShadow: 3 }}>
+                <Typography variant="h5" textAlign="center" mb={2}>
+                    Login to your Account
+                </Typography>
                 <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>Email:</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Password:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit">Login</button>
+                    <TextField
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Login
+                    </Button>
                 </form>
-            </div>
-        </div>
+                <Typography variant="body2" mt={2} textAlign="center">
+                    Don't have an account?{" "}
+                    <Link to="/register">Create one</Link>
+                </Typography>
+            </Card>
+        </Box>
     );
 };
 
