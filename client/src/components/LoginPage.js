@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { Card, TextField, Button, Typography, Box } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -20,16 +22,17 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const res = await axios.post(
                 "http://localhost:5000/api/auth/login",
-                formData
+                { ...formData }
             );
-            if (res.status === 200) {
-                // Handle successful login (redirect, save token, etc.)
-                navigate("/");
-            }
+            console.log(res.data.token);
+            login(res.data.token);
+            navigate("/");
         } catch (err) {
+            console.log(err);
             console.error("Login failed", err);
         }
     };

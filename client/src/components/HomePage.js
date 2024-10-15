@@ -9,6 +9,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchChannels = async () => {
             const token = localStorage.getItem("token");
+            console.log(token);
             const { data } = await axios.get(
                 "http://localhost:5000/api/channel/followed",
                 {
@@ -29,6 +30,7 @@ const HomePage = () => {
     return (
         <div className="home-page">
             <h2>Your Channels</h2>
+            <Link to="/create-channel">create-channel</Link>
             <ul>
                 {channels.map((channel) => (
                     <li key={channel._id}>

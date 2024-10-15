@@ -22,15 +22,18 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const { name, email, password } = formData;
             const res = await axios.post(
                 "http://localhost:5000/api/auth/register",
-                formData
+                {
+                    name,
+                    email,
+                    password,
+                }
             );
-            if (res.status === 200) {
-                // Navigate to login after successful registration
-                navigate("/login");
-            }
+            navigate("/login");
         } catch (err) {
+            console.log(err);
             console.error("Registration failed", err);
         }
     };

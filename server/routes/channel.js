@@ -8,6 +8,7 @@ const router = express.Router();
 
 // Create channel (user can create only 1 channel)
 router.post("/create", protect, async (req, res) => {
+    console.log(req.body);
     const { name, description } = req.body;
 
     // Check if user already has a created channel

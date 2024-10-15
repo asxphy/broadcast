@@ -9,6 +9,7 @@ const CreateChannelPage = () => {
     const navigate = useNavigate(); // React Router v6 hook for navigation
 
     const handleSubmit = async (e) => {
+        const token = localStorage.getItem("authToken");
         e.preventDefault();
 
         // Validate channel name
@@ -19,9 +20,11 @@ const CreateChannelPage = () => {
 
         try {
             // Request to create the channel (Adjust this based on your API)
+            console.log(token);
             const response = await axios.post(
                 "http://localhost:5000/api/channel/create",
                 {
+                    headers: { Authorization: `Bearer ${token}` },
                     name: channelName,
                 }
             );

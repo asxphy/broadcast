@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
             expiresIn: "1h",
         });
 
-        res.status(201).json({
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,

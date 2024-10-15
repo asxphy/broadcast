@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
         ref: "Channel",
         default: [],
     },
+    createdChannel: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Channel",
+        default: null, // Initially, user has no channel created
+    },
 });
 
 // Hash password before saving
